@@ -27,6 +27,7 @@
       "ipfs": "yarn workspace @scaffold-eth/vite-app ipfs",
       "surge": "yarn workspace @scaffold-eth/vite-app surge",
       "s3": "yarn workspace @scaffold-eth/vite-app s3",
+      "verify": "yarn workspace @scaffold-eth/hardhat etherscan-verify",
       "ship": "yarn workspace @scaffold-eth/vite-app ship",
       "generate": "yarn workspace @scaffold-eth/hardhat generate",
       "account": "yarn workspace @scaffold-eth/hardhat account",

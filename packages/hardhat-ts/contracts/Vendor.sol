@@ -10,6 +10,7 @@ contract Vendor is Ownable {
 
   // 购买代币事件
   event BuyTokens(address buyer, uint256 amountOfEth, uint256 amountOfTokens);
+  event SellTokens(address seller, uint256 amountOfTokens, uint256 amountOfETH);
 
   constructor(address tokenAddress) public {
     yourToken = YourToken(tokenAddress);
@@ -45,5 +46,28 @@ contract Vendor is Ownable {
   }
     
 
-  // ToDo: create a sellTokens() function:
+  // 允许用户使用代币换回 ETH
+  function sellTokens(uint256 amountToSell) public {
+    // 价差是否合理
+    require(amountToSell > 0, "Amount to sell must be greater than 0");
+    
+    // 检查用户是否有足够的代币
+    uint256 userBalance = yourToken.balanceOf(msg.sender);
+    require(userBalance >= amountToSell, "Not enought tokens");
+
+    // 检查承销商是否有足够的 ETH
+    uint256 amountOfEthNeeded = amountToSell / tokensPerEth;
+    uint256 venderBalance = address(this).balance;
+    require(amountOfEthNeeded <= venderBalance, "Not enought ether");
+
+    // 用户发送代币给承销商
+    bool sent =  yourToken.transferFrom(msg.sender, address(this), amountToSell);
+    require(sent, "Failed to transfer tokens from seller to vender");
+
+    // 承销商发送 ETH 给用户
+    (sent, ) = msg.sender.call{value: amountOfEthNeeded}("");
+    require(sent, "Failed to send ether from vender to seller");
+
+    emit SellTokens(msg.sender, amountToSell, amountOfEthNeeded);
+  }
 }
